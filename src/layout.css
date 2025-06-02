@@ -1,47 +1,20 @@
 /* layout.css */
 
-/* Página toda com fundo escuro */
+/* Estrutura base */
 .pagina-caixa {
     background-color: #000;
-    color: #fff;
+    color: #eee;
     min-height: 100vh;
-    padding-top: 80px; /* Espaço para não cobrir a logo */
-    font-family: 'Arial', sans-serif;
+    padding-top: 100px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
   }
   
-  /* Menu fixo no topo */
-  .menu-navegacao {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background-color: #111;
+  /* Cabeçalho e Logo */
+  .cabecalho {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    padding: 20px;
-    z-index: 10;
-  }
-  
-  /* Botões do menu */
-  .menu-navegacao button {
-    background-color: #222;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .menu-navegacao button:hover {
-    background-color: #ff9900;
-  }
-  
-  /* Cabeçalho com a logo */
-  .cabecalho {
-    text-align: center;
-    margin: 40px 0 20px;
+    margin-bottom: 40px;
   }
   
   .logo {
@@ -50,36 +23,116 @@
     box-shadow: 0 0 30px rgba(255, 153, 0, 0.4);
   }
   
-  /* Conteúdo principal */
+  /* Navegação */
+  .menu-navegacao {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #111;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 20px;
+    z-index: 10;
+    margin-bottom: 20px;
+  }
+  
+  .menu-navegacao button {
+    background-color: #111;
+    border: 1px solid #444;
+    padding: 10px 20px;
+    color: #eee;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .menu-navegacao button:hover {
+    background-color: #f0a500;
+    color: #000;
+  }
+  
+  /* Conteúdo Principal */
   .conteudo {
     text-align: center;
     padding: 20px;
   }
   
-  /* Título */
-  .conteudo h1 {
-    font-size: 36px;
+  .conteudo h1,
+  .titulo {
+    font-size: 2.5rem;
+    font-weight: 700;
     margin-bottom: 30px;
+    color: #f0a500;
+    text-align: center;
+    margin-top: 30px;
   }
   
-  /* Botões de venda */
+  /* Seções */
+  section {
+    background-color: #111;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+  }
+  
+  section h2 {
+    margin-bottom: 15px;
+    font-weight: 700;
+    color: #f0a500;
+  }
+  
+  /* Inputs e Labels */
+  label {
+    font-weight: 600;
+    margin-right: 10px;
+    color: #ccc;
+    display: inline-block;
+  }
+  
+  input[type="date"] {
+    padding: 7px 12px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background-color: #222;
+    color: #eee;
+  }
+  
+  /* Botões Gerais */
+  button,
+  .btn-venda {
+    background-color: #ffcc00;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  
+  button:hover,
+  .btn-venda:hover {
+    color: white;
+    background-color: #ffb300; /* ou qualquer tom que deseje no hover */
+    transform: scale(1.05);
+    transition: all 0.2s ease-in-out;
+  }
+  
+  
   .btn-venda {
     display: block;
     margin: 15px auto;
-    padding: 12px 25px;
-    background-color: #ff9900;
-    border: none;
-    color: #000;
-    font-weight: bold;
-    border-radius: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
   }
   
-  .btn-venda:hover {
-    background-color: #ffaa33;
-  }
+  /* Itens da venda */
   .itens-venda {
     margin: 20px 0;
     display: flex;
@@ -107,9 +160,90 @@
     border-bottom: 1px solid #444;
   }
   
-  .titulo {
-    font-size: 32px;
-    color: #fff;
+  /* Tabelas */
+  table,
+  .tabela-relatorios {
+    width: 100%;
+    border-collapse: collapse;
+    color: #eee;
+    font-family: 'Arial', sans-serif;
+    font-size: 0.95rem;
+    margin-top: 20px;
+  }
+  
+  table thead tr,
+  .tabela-relatorios th {
+    background-color: #222;
+    color: #ffd600;
+  }
+  
+  table th,
+  table td,
+  .tabela-relatorios th,
+  .tabela-relatorios td {
+    padding: 12px 15px;
+    border: 1px solid #ffd600;
     text-align: center;
+  }
+  
+  table tbody tr:hover,
+  .tabela-relatorios tbody tr:hover {
+    background-color: #1a1a1a;
+  }
+  
+  .tabela-relatorios tbody tr:nth-child(even) {
+    background-color: #333;
+  }
+  
+  /* Tipografia geral */
+  ul {
+    padding-left: 20px;
+    margin: 0;
+    list-style-type: disc;
+    color: #ccc;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ccc;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .menu-navegacao {
+      flex-direction: column;
+    }
+  
+    .menu-navegacao button {
+      width: 100%;
+    }
+  
+    input[type="date"] {
+      width: 100%;
+      margin-top: 5px;
+    }
+  
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+  
+    .itens-venda {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  .grupo-vendas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  @media (max-width: 480px) {
+    .btn-venda {
+      width: 90%;
+      font-size: 1.1rem;
+    }
   }
   

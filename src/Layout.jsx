@@ -1,14 +1,15 @@
 import React from "react";
 import "./layout.css";
 import logo from "./assets/logo.png"; // Correto!
+import { Link } from "react-router-dom"; // importe no topo
 
 function Layout() {
   return (
     <div className="pagina-caixa">
       <nav className="menu-navegacao">
-        <button>Caixa</button>
-        <button>Estoque</button>
-        <button>Relatórios</button>
+        <Link to="/caixa"><button>Caixa</button></Link>
+        <Link to="/estoque"><button>Estoque</button></Link>
+        <Link to="/relatorios"><button>Relatórios</button></Link>
       </nav>
 
       <header className="cabecalho">
