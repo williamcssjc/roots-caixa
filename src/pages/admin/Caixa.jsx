@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { db } from "../firebase/firebaseConfig";
+import { db } from "../../firebase/firebaseConfig";
 import {
   collection,
   addDoc,
@@ -12,10 +12,11 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
-import "../layout.css";
-import logo from "../assets/logo.png";
+import "../../layout.css";
+import logo from "../../assets/logo.png";
+
 import { Link } from "react-router-dom";
-import receitas from "../data/receitas"; // importa o mapa de receitas
+import receitas from "../../data/receitas"; // importa o mapa de receitas
 
 function Caixa() {
   const [pedido, setPedido] = useState([]);

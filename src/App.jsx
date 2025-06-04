@@ -1,23 +1,42 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Caixa from "./pages/Caixa";
-import Estoque from "./pages/Estoque";
-import Relatorios from "./pages/Relatorios";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+// Layouts
+import AdminLayout from "./components/layouts/AdminLayout";
+import ClienteLayout from "./components/layouts/ClienteLayout";
+
+// Páginas Admin
+import Caixa from "./pages/admin/Caixa";
+import Estoque from "./pages/admin/Estoque";
+import Relatorios from "./pages/admin/Relatorios";
+
+// Páginas Cliente
+import PedidoCliente from "./pages/clientes/PedidoCliente";
+import Cadastro from "./pages/clientes/Cadastro";
+import Carrinho from "./pages/clientes/Carrinho";
+import Promocoes from "./pages/clientes/Promocoes";
 
 function App() {
   return (
     <Router>
-      <nav className="menu-navegacao">
-        <Link to="/caixa"><button>Caixa</button></Link>
-        <Link to="/estoque"><button>Estoque</button></Link>
-        <Link to="/relatorios"><button>Relatórios</button></Link>
-      </nav>
-
       <Routes>
-        <Route path="/caixa" element={<Caixa />} />
-        <Route path="/estoque" element={<Estoque />} />
-        <Route path="/relatorios" element={<Relatorios />} />
-        <Route path="*" element={<Caixa />} /> {/* Rota padrão */}
+        {/* Layout e rotas Admin */}
+        <Route path="/admin/*" element={<AdminLayout />}>
+          <Route path="caixa" element={<Caixa />} />
+          <Route path="estoque" element={<Estoque />} />
+          <Route path="relatorios" element={<Relatorios />} />
+        </Route>
+
+        {/* Layout e rotas Cliente */}
+        <Route path="/cliente/*" element={<ClienteLayout />}>
+          <Route path="pedido" element={<PedidoCliente />} />
+          <Route path="cadastro" element={<Cadastro />} />
+          <Route path="carrinho" element={<Carrinho />} />
+          <Route path="promocoes" element={<Promocoes />} />
+        </Route>
+
+        {/* Página padrão */}
+        <Route path="*" element={<PedidoCliente />} />
       </Routes>
     </Router>
   );

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { collection, query, where, getDocs, orderBy, limit } from "firebase/firestore";
-import { db } from "../firebase/firebaseConfig";
+import { db } from "../../firebase/firebaseConfig";
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.png";
-import "../layout.css";
+import logo from "../../assets/logo.png";
+import "../../layout.css";
 
 import {
   BarChart,
