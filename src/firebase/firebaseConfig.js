@@ -3,18 +3,15 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-console.log("API KEY:", import.meta.env.VITE_FIREBASE_API_KEY);
-
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyAWZ_mS8mRvXiyYZhtg3Q2UOp-ur64CbdU",
+  authDomain: "roots-burguer-caixa.firebaseapp.com",
+  projectId: "roots-burguer-caixa",
+  storageBucket: "roots-burguer-caixa.firebasestorage.app",
+  messagingSenderId: "470523842936",
+  appId: "1:470523842936:web:5c56d8e2a8f0c27e22788d",
+  measurementId: "G-V2L8F44TQS"
 };
-
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
