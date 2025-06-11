@@ -10,6 +10,7 @@ import {
   getDocs,
   orderBy,
   limit,
+  where,       
   onSnapshot,
 } from "firebase/firestore";
 import "../../layout.css";
@@ -482,6 +483,13 @@ function PedidoCliente() {
     { imagem: "/promo2.jpg", alt: "Promoção 2" },
   ];
 
+  useEffect(() => {
+    const numeroSalvo = localStorage.getItem("pedidoClienteRoots");
+    if (numeroSalvo && !numeroPedido) {
+      buscarPedidoAtivo(parseInt(numeroSalvo));
+    }
+  }, []);
+  
   // Limpar notificação após 3 segundos
   useEffect(() => {
     if (notificacao.mensagem) {
@@ -492,6 +500,32 @@ function PedidoCliente() {
       return () => clearTimeout(timer);
     }
   }, [notificacao]);
+
+  const buscarPedidoAtivo = async (numero) => {
+    try {
+      const vendasRef = collection(db, "vendas");
+      const q = query(vendasRef, where("numeroPedido", "==", numero));
+      const snap = await getDocs(q);
+  
+      if (!snap.empty) {
+        const docSnap = snap.docs[0];
+        const ref = docSnap.ref;
+        const data = docSnap.data();
+  
+        setNumeroPedido(numero);
+        setStatusPedido(data.status);
+  
+        onSnapshot(ref, (doc) => {
+          if (doc.exists()) {
+            setStatusPedido(doc.data().status);
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao buscar pedido salvo:", error);
+    }
+  };
+  
 
   // Abrir modal de produto
   const abrirModal = (produto) => {
@@ -661,6 +695,8 @@ function PedidoCliente() {
       const docRef = await addDoc(vendasRef, dadosVenda);
       await descontarIngredientes(pedido);
 
+      localStorage.setItem("pedidoClienteRoots", novoNumeroPedido);
+
       setNumeroPedido(novoNumeroPedido);
       setPedido([]);
       setCliente({
@@ -707,12 +743,10 @@ function PedidoCliente() {
   return (
     <div className="pagina-caixa">
       {/* Navegação */}
-      <nav className="menu-navegacao">
-        <Link to="/cliente/pedido"><button>Pedido</button></Link>
-        <Link to="/cliente/cadastro"><button>Cadastro</button></Link>
-        <Link to="/cliente/carrinho"><button>Carrinho</button></Link>
-        <Link to="/cliente/promocoes"><button>Promoções</button></Link>
-      </nav>
+      <header className="header-cliente">
+  <p className="boas-vindas"> Bem-vindo ao Roots Burguer</p>
+</header>
+
 
       {/* Cabeçalho */}
       <header className="cabecalho">
