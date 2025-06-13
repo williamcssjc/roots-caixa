@@ -14,7 +14,6 @@ import {
 } from "firebase/firestore";
 import "../../layout.css";
 import logo from "../../assets/logo.png";
-
 import { Link } from "react-router-dom";
 import receitas from "../../data/receitas"; // importa o mapa de receitas
 

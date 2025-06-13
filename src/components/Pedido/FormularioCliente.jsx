@@ -1,29 +1,65 @@
-// 📁 src/components/pedido/StatusPedido.jsx
-// ✔️ StatusPedido.jsx
+// 📁 src/components/Pedido/FormularioCliente.jsx
+
 import React from "react";
 
-const StatusPedido = ({ numeroPedido, status }) => {
-  if (!numeroPedido) return null;
-  const getStatusColor = () => {
-    switch (status) {
-      case "Recebido": return "bg-blue-500";
-      case "Em Preparo": return "bg-yellow-500";
-      case "Saiu para Entrega": return "bg-purple-500";
-      case "Entregue": return "bg-green-500";
-      default: return "bg-gray-500";
-    }
-  };
+const FormularioCliente = ({ cliente, setCliente, erros }) => {
   return (
-    <div className="bg-gray-800 rounded-lg p-4 mt-4">
-      <h3 className="text-lg font-bold text-amber-500 mb-2">
-        Pedido #{String(numeroPedido).padStart(3, "0")}
-      </h3>
-      <div className="flex items-center">
-        <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor()}`}></div>
-        <p className="text-white">{status || "Aguardando atualização..."}</p>
+    <div className="formulario-cliente">
+      <h3>Dados do Cliente:</h3>
+
+      <div className="mb-3">
+        <input
+          type="text"
+          placeholder="Nome completo *"
+          value={cliente.nome}
+          onChange={(e) => setCliente({ ...cliente, nome: e.target.value })}
+          className={erros.nome ? "border-red-500" : ""}
+        />
+        {erros.nome && <div className="text-red-500 text-sm mt-1">{erros.nome}</div>}
       </div>
+
+      <div className="mb-3">
+        <input
+          type="text"
+          placeholder="Endereço completo *"
+          value={cliente.endereco}
+          onChange={(e) => setCliente({ ...cliente, endereco: e.target.value })}
+          className={erros.endereco ? "border-red-500" : ""}
+        />
+        {erros.endereco && <div className="text-red-500 text-sm mt-1">{erros.endereco}</div>}
+      </div>
+
+      <div className="mb-3">
+        <input
+          type="text"
+          placeholder="Telefone *"
+          value={cliente.telefone}
+          onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, "");
+            setCliente({ ...cliente, telefone: value });
+          }}
+          className={erros.telefone ? "border-red-500" : ""}
+        />
+        {erros.telefone && <div className="text-red-500 text-sm mt-1">{erros.telefone}</div>}
+      </div>
+
+      <div className="mb-3">
+        <select
+          value={cliente.pagamento}
+          onChange={(e) => setCliente({ ...cliente, pagamento: e.target.value })}
+          className={erros.pagamento ? "border-red-500" : ""}
+        >
+          <option value="">Forma de Pagamento *</option>
+          <option value="Pix">Pix</option>
+          <option value="Cartão">Cartão</option>
+          <option value="Dinheiro">Dinheiro</option>
+        </select>
+        {erros.pagamento && <div className="text-red-500 text-sm mt-1">{erros.pagamento}</div>}
+      </div>
+
+      <div className="text-sm text-gray-400 mt-2">* Campos obrigatórios</div>
     </div>
   );
 };
 
-export default StatusPedido;
+export default FormularioCliente;

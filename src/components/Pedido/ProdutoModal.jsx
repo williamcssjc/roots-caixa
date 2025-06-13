@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+// 📁 src/components/Pedido/ProdutoModal.jsx — versão fiel ao original
+
+import React, { useState } from "react";
 
 const ProdutoModal = ({ produto, onClose, onConfirm }) => {
   const [observacao, setObservacao] = useState("");
@@ -7,19 +9,15 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
   const [quantidade, setQuantidade] = useState(1);
   const [saborRefriSelecionado, setSaborRefriSelecionado] = useState("");
 
-  // Detecta tipo do produto
-  const ehHamburguer =
-    produto?.nome.toLowerCase().includes("burguer") ||
+  const ehHamburguer = produto?.nome.toLowerCase().includes("burguer") ||
     produto?.nome.toLowerCase().includes("bacon") ||
     produto?.nome.toLowerCase().includes("salada");
 
-  const ehRefri =
-    produto?.nome.toLowerCase().includes("refri") ||
+  const ehRefri = produto?.nome.toLowerCase().includes("refri") ||
     produto?.nome.toLowerCase().includes("lata");
 
   const ehBatata = produto?.nome.toLowerCase().includes("batata");
 
-  // Definição de opcionais conforme categoria
   const opcionaisHamburguer = [
     { nome: "Bacon Extra", preco: 3 },
     { nome: "+1 Blend", preco: 5 },
@@ -31,13 +29,7 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
     { nome: "Bacon Extra", preco: 3 },
   ];
 
-  const saboresRefri = [
-    "Coca-Cola",
-    "Guaraná",
-    "Fanta Laranja",
-    "Fanta Uva",
-    "Soda",
-  ];
+  const saboresRefri = ["Coca-Cola", "Guaraná", "Fanta Laranja", "Fanta Uva", "Soda"];
 
   const getOpcionais = () => {
     if (ehHamburguer) return opcionaisHamburguer;
@@ -45,29 +37,25 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
     return [];
   };
 
-  // Função para adicionar/remover opcionais
   const toggleOpcional = (opcional) => {
-    setOpcionaisSelecionados((prev) =>
-      prev.includes(opcional)
-        ? prev.filter((item) => item !== opcional)
-        : [...prev, opcional]
-    );
+    setOpcionaisSelecionados((prev) => {
+      if (prev.includes(opcional)) {
+        return prev.filter((item) => item !== opcional);
+      } else {
+        return [...prev, opcional];
+      }
+    });
   };
 
-  // Cálculo do preço total dinâmico (base + opcionais) x quantidade
   const calcularPrecoTotal = () => {
     if (!produto) return 0;
-
     const precoBase = produto.preco;
-
     const precoOpcionais = getOpcionais()
       .filter((op) => opcionaisSelecionados.includes(op.nome))
       .reduce((acc, op) => acc + op.preco, 0);
-
     return (precoBase + precoOpcionais) * quantidade;
   };
 
-  // Confirmação do pedido com validações e montagem da observação final
   const handleConfirm = () => {
     if (ehRefri && !saborRefriSelecionado) {
       alert("Por favor, selecione um sabor de refrigerante.");
@@ -79,10 +67,10 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
     );
 
     const observacaoArray = [
-      observacao.trim() || null,
+      observacao.trim() ? observacao.trim() : null,
       ehHamburguer && pontoBlend ? `ponto: ${pontoBlend}` : null,
       ehRefri && saborRefriSelecionado ? `sabor: ${saborRefriSelecionado}` : null,
-      ...adicionais.map((op) => `+ ${op.nome}`),
+      ...adicionais.map((op) => `+ ${op.nome}`)
     ].filter(Boolean);
 
     const observacaoFinal = observacaoArray.length > 0 ? observacaoArray.join(" | ") : "";
@@ -93,132 +81,127 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
       ...produto,
       observacao: observacaoFinal,
       preco: produto.preco + valorAdicionais,
-      quantidade: quantidade,
+      quantidade: quantidade
     };
 
     onConfirm(produtoFinal);
   };
 
-  // Resetar estado quando o produto mudar (reabrir modal com outro produto)
-  useEffect(() => {
-    setObservacao("");
-    setPontoBlend("");
-    setOpcionaisSelecionados([]);
-    setQuantidade(1);
-    setSaborRefriSelecionado("");
-  }, [produto]);
-
   return (
-    <div
-      className="modal fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50"
-      onClick={onClose}
-    >
-      <div
-        className="modal-conteudo bg-gray-900 rounded-lg p-6 max-w-md w-full relative"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Cabeçalho */}
-        <div className="flex justify-between items-center border-b border-gray-700 pb-3 mb-4">
+    <div className="modal" onClick={onClose}>
+      <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-center border-b border-gray-700 pb-3 mb-2">
           <h3 className="text-xl font-bold text-amber-500">{produto.nome}</h3>
           <div className="text-lg font-bold text-white">
             R$ {calcularPrecoTotal().toFixed(2)}
           </div>
         </div>
 
-        {/* Quantidade */}
-        <label className="block mb-4 text-white">
-          Quantidade:
-          <input
-            type="number"
-            min={1}
-            value={quantidade}
-            onChange={(e) =>
-              setQuantidade(e.target.value < 1 ? 1 : Number(e.target.value))
-            }
-            className="ml-2 rounded px-2 py-1 text-black w-20"
-          />
-        </label>
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-white font-medium">Quantidade:</label>
+            <div className="flex items-center bg-gray-800 rounded-md">
+              <button
+                className="px-3 py-1 text-white hover:bg-gray-700 rounded-l-md"
+                onClick={() => setQuantidade(Math.max(1, quantidade - 1))}
+              >-</button>
+              <span className="px-4 py-1 text-white">{quantidade}</span>
+              <button
+                className="px-3 py-1 text-white hover:bg-gray-700 rounded-r-md"
+                onClick={() => setQuantidade(quantidade + 1)}
+              >+</button>
+            </div>
+          </div>
+        </div>
 
-        {/* Ponto Blend - só hambúrguer */}
         {ehHamburguer && (
-          <label className="block mb-4 text-white">
-            Ponto do Blend:
-            <select
-              value={pontoBlend}
-              onChange={(e) => setPontoBlend(e.target.value)}
-              className="ml-2 rounded px-2 py-1 text-black w-full"
-            >
-              <option value="">Selecione</option>
-              <option value="malpassado">Malpassado</option>
-              <option value="ao_ponto">Ao Ponto</option>
-              <option value="bem_passado">Bem Passado</option>
-            </select>
-          </label>
-        )}
-
-        {/* Opcionais */}
-        {getOpcionais().length > 0 && (
-          <fieldset className="mb-4 text-white">
-            <legend className="mb-2 font-semibold">Adicionais:</legend>
-            {getOpcionais().map((opcional) => (
-              <label key={opcional.nome} className="block mb-1 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={opcionaisSelecionados.includes(opcional.nome)}
-                  onChange={() => toggleOpcional(opcional.nome)}
-                  className="mr-2"
-                />
-                {`${opcional.nome} (+R$${opcional.preco.toFixed(2)})`}
-              </label>
-            ))}
-          </fieldset>
-        )}
-
-        {/* Sabor Refrigerante */}
-        {ehRefri && (
-          <label className="block mb-4 text-white">
-            Sabor do Refrigerante:
-            <select
-              value={saborRefriSelecionado}
-              onChange={(e) => setSaborRefriSelecionado(e.target.value)}
-              className="ml-2 rounded px-2 py-1 text-black w-full"
-            >
-              <option value="">Selecione</option>
-              {saboresRefri.map((sabor) => (
-                <option key={sabor} value={sabor}>
-                  {sabor}
-                </option>
+          <div className="mb-4">
+            <label className="block text-white font-medium mb-2">Ponto do Blend:</label>
+            <div className="grid grid-cols-3 gap-2">
+              {["Mal passado", "Ao ponto", "Bem passado"].map((ponto) => (
+                <button
+                  key={ponto}
+                  className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                    pontoBlend === ponto ? "bg-amber-500 text-black" : "bg-gray-700 text-white hover:bg-gray-600"
+                  }`}
+                  onClick={() => setPontoBlend(ponto)}
+                >
+                  {ponto}
+                </button>
               ))}
-            </select>
-          </label>
+            </div>
+          </div>
         )}
 
-        {/* Observação */}
-        <label className="block mb-6 text-white">
-          Observação:
+        {ehRefri && (
+          <div className="mb-4">
+            <label className="block text-white font-medium mb-2">Sabor:</label>
+            <div className="grid grid-cols-1 gap-2">
+              {saboresRefri.map((sabor) => (
+                <button
+                  key={sabor}
+                  className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                    saborRefriSelecionado === sabor ? "bg-amber-500 text-black" : "bg-gray-700 text-white hover:bg-gray-600"
+                  }`}
+                  onClick={() => setSaborRefriSelecionado(sabor)}
+                >
+                  {sabor}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {getOpcionais().length > 0 && (
+          <div className="mb-4">
+            <label className="block text-white font-medium mb-2">Opcionais:</label>
+            <div className="space-y-2">
+              {getOpcionais().map((op, i) => (
+                <div
+                  key={i}
+                  className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${
+                    opcionaisSelecionados.includes(op.nome)
+                      ? "bg-amber-500/20 border border-amber-500"
+                      : "bg-gray-700 hover:bg-gray-600"
+                  }`}
+                  onClick={() => toggleOpcional(op.nome)}
+                >
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2 h-4 w-4 accent-amber-500"
+                      checked={opcionaisSelecionados.includes(op.nome)}
+                      onChange={() => {}}
+                    />
+                    <span className="text-white">{op.nome}</span>
+                  </div>
+                  <span className="text-amber-500 font-medium">+R$ {op.preco}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mb-4">
+          <label className="block text-white font-medium mb-2">Observações:</label>
           <textarea
+            className="w-full bg-gray-700 text-white border border-gray-600 rounded-md p-2 focus:border-amber-500 focus:outline-none"
+            placeholder="Ex: sem cebola, no ponto certo..."
+            rows="2"
             value={observacao}
             onChange={(e) => setObservacao(e.target.value)}
-            placeholder="Ex: sem cebola, pouco sal"
-            className="w-full mt-1 rounded px-3 py-2 text-black resize-none"
-            rows={3}
-          />
-        </label>
+          ></textarea>
+        </div>
 
-        {/* Botões */}
-        <div className="flex justify-end gap-4">
+        <div className="flex gap-3 mt-2">
           <button
-            onClick={handleConfirm}
-            className="bg-amber-500 px-5 py-2 rounded font-bold text-black hover:bg-amber-600 transition"
-          >
-            Confirmar
-          </button>
-          <button
+            className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md transition-colors"
             onClick={onClose}
-            className="bg-gray-700 px-5 py-2 rounded font-bold text-white hover:bg-gray-600 transition"
-          >
-            Cancelar
-          </button>
+          >Cancelar</button>
+          <button
+            className="flex-1 py-3 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-md transition-colors"
+            onClick={handleConfirm}
+          >Adicionar ao Pedido</button>
         </div>
       </div>
     </div>

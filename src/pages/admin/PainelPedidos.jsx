@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+// 📁 PainelPedidos.jsx — com alerta sonoro e visual ao chegar novo pedido
+
+import React, { useEffect, useState, useRef } from "react";
 import { db } from "../../firebase/firebaseConfig";
 import {
   collection,
@@ -15,19 +17,32 @@ import "../../layout.css";
 function PainelPedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [carregando, setCarregando] = useState(true);
+  const [alertaNovoPedido, setAlertaNovoPedido] = useState(false);
+  const audioRef = useRef(null);
+  const ultimoPedidoId = useRef(null);
 
   useEffect(() => {
     const q = query(collection(db, "vendas"), orderBy("data", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const lista = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setPedidos(lista);
+      const novaLista = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      if (pedidos.length > 0 && novaLista.length > pedidos.length) {
+        const novo = novaLista[0];
+
+        if (novo.status === "Recebido" && novo.id !== ultimoPedidoId.current) {
+          setAlertaNovoPedido(true);
+          ultimoPedidoId.current = novo.id;
+          if (audioRef.current) audioRef.current.play();
+          setTimeout(() => setAlertaNovoPedido(false), 5000);
+        }
+      }
+
+      setPedidos(novaLista);
       setCarregando(false);
     });
+
     return () => unsubscribe();
-  }, []);
+  }, [pedidos]);
 
   const atualizarStatus = async (id, novoStatus) => {
     try {
@@ -39,21 +54,24 @@ function PainelPedidos() {
 
   const corStatus = (status) => {
     switch (status) {
-      case "Recebido":
-        return "bg-blue-500";
-      case "Em Preparo":
-        return "bg-yellow-500";
-      case "Saiu para Entrega":
-        return "bg-purple-500";
-      case "Entregue":
-        return "bg-green-500";
-      default:
-        return "bg-gray-500";
+      case "Recebido": return "bg-blue-500";
+      case "Em Preparo": return "bg-yellow-500";
+      case "Saiu para Entrega": return "bg-purple-500";
+      case "Entregue": return "bg-green-500";
+      default: return "bg-gray-500";
     }
   };
 
   return (
     <div className="pagina-caixa">
+      <audio ref={audioRef} src="/public/Sons/novo-pedido.mp3" preload="auto" />
+
+      {alertaNovoPedido && (
+        <div className="fixed top-0 left-0 right-0 bg-green-600 text-white text-center py-2 font-bold z-50 shadow-md animate-pulse">
+          🔔 Novo pedido recebido!
+        </div>
+      )}
+
       <nav className="menu-navegacao">
         <Link to="/caixa"><button>Caixa</button></Link>
         <Link to="/estoque"><button>Estoque</button></Link>

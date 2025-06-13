@@ -20,435 +20,14 @@ import receitas from "../../data/receitas";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import ProdutoModal from "../../components/Pedido/ProdutoModal";
+import ResumoPedido from "../../components/Pedido/ResumoPedido";
+import FormularioCliente from "../../components/Pedido/FormularioCliente";
+import StatusPedido from "../../components/Pedido/StatusPedido";
+import ModalConfirmacaoPedido from "../../components/Pedido/ModalConfirmacaoPedido";
+import AlertaStatusPedido from "../../components/Pedido/AlertaStatusPedido";
+import { useRef } from "react"; // ✅ NOVO: para status atualizado no snapshot
 
-// Componente para o modal de personalização do produto
-const ProdutoModal = ({ produto, onClose, onConfirm }) => {
-  const [observacao, setObservacao] = useState("");
-  const [pontoBlend, setPontoBlend] = useState("");
-  const [opcionaisSelecionados, setOpcionaisSelecionados] = useState([]);
-  const [quantidade, setQuantidade] = useState(1);
-  const [saborRefriSelecionado, setSaborRefriSelecionado] = useState("");
-  
-  // Determinando o tipo de produto
-  const ehHamburguer = produto?.nome.toLowerCase().includes("burguer") || 
-                       produto?.nome.toLowerCase().includes("bacon") || 
-                       produto?.nome.toLowerCase().includes("salada");
-  
-  const ehRefri = produto?.nome.toLowerCase().includes("refri") || 
-                 produto?.nome.toLowerCase().includes("lata");
-  
-  const ehBatata = produto?.nome.toLowerCase().includes("batata");
-  
-  // Opcionais específicos por tipo de produto
-  const opcionaisHamburguer = [
-    { nome: "Bacon Extra", preco: 3 },
-    { nome: "+1 Blend", preco: 5 },
-    { nome: "Cheddar Extra", preco: 2 },
-  ];
-  
-  const opcionaisBatata = [
-    { nome: "Cheddar Extra", preco: 2 },
-    { nome: "Bacon Extra", preco: 3 },
-  ];
-  
-  // Sabores de refrigerante
-  const saboresRefri = [
-    "Coca-Cola",
-    "Guaraná",
-    "Fanta Laranja",
-    "Fanta Uva",
-    "Soda"
-  ];
-  
-  // Determina quais opcionais mostrar com base no tipo de produto
-  const getOpcionais = () => {
-    if (ehHamburguer) return opcionaisHamburguer;
-    if (ehBatata) return opcionaisBatata;
-    return [];
-  };
-  
-  const toggleOpcional = (opcional) => {
-    setOpcionaisSelecionados((prev) => {
-      if (prev.includes(opcional)) {
-        return prev.filter((item) => item !== opcional);
-      } else {
-        return [...prev, opcional];
-      }
-    });
-  };
-  
-  const calcularPrecoTotal = () => {
-    if (!produto) return 0;
-    
-    const precoBase = produto.preco;
-    const precoOpcionais = getOpcionais()
-      .filter(op => opcionaisSelecionados.includes(op.nome))
-      .reduce((acc, op) => acc + op.preco, 0);
-    
-    return (precoBase + precoOpcionais) * quantidade;
-  };
-  
-  const handleConfirm = () => {
-    // Validar seleção de sabor para refrigerantes
-    if (ehRefri && !saborRefriSelecionado) {
-      alert("Por favor, selecione um sabor de refrigerante.");
-      return;
-    }
-    
-    const adicionais = getOpcionais().filter((op) =>
-      opcionaisSelecionados.includes(op.nome)
-    );
-    
-    // Gera observação padronizada
-    const observacaoArray = [
-      observacao.trim() ? observacao.trim() : null,
-      ehHamburguer && pontoBlend ? `ponto: ${pontoBlend}` : null,
-      ehRefri && saborRefriSelecionado ? `sabor: ${saborRefriSelecionado}` : null,
-      ...adicionais.map((op) => `+ ${op.nome}`)
-    ].filter(Boolean);
-    
-    const observacaoFinal = observacaoArray.length > 0 
-      ? observacaoArray.join(" | ") 
-      : "";
-    
-    const valorAdicionais = adicionais.reduce((acc, item) => acc + item.preco, 0);
-    
-    const produtoFinal = {
-      ...produto,
-      observacao: observacaoFinal,
-      preco: produto.preco + valorAdicionais,
-      quantidade: quantidade
-    };
-    
-    onConfirm(produtoFinal);
-  };
-  
-  return (
-    <div className="modal" onClick={onClose}>
-      <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-between items-center border-b border-gray-700 pb-3 mb-2">
-          <h3 className="text-xl font-bold text-amber-500">{produto.nome}</h3>
-          <div className="text-lg font-bold text-white">
-            R$ {calcularPrecoTotal().toFixed(2)}
-          </div>
-        </div>
-        
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-white font-medium">Quantidade:</label>
-            <div className="flex items-center bg-gray-800 rounded-md">
-              <button 
-                className="px-3 py-1 text-white hover:bg-gray-700 rounded-l-md"
-                onClick={() => setQuantidade(Math.max(1, quantidade - 1))}
-              >
-                -
-              </button>
-              <span className="px-4 py-1 text-white">{quantidade}</span>
-              <button 
-                className="px-3 py-1 text-white hover:bg-gray-700 rounded-r-md"
-                onClick={() => setQuantidade(quantidade + 1)}
-              >
-                +
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        {/* Opções específicas para hambúrgueres */}
-        {ehHamburguer && (
-          <div className="mb-4">
-            <label className="block text-white font-medium mb-2">Ponto do Blend:</label>
-            <div className="grid grid-cols-3 gap-2">
-              {["Mal passado", "Ao ponto", "Bem passado"].map((ponto) => (
-                <button
-                  key={ponto}
-                  className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                    pontoBlend === ponto 
-                      ? "bg-amber-500 text-black" 
-                      : "bg-gray-700 text-white hover:bg-gray-600"
-                  }`}
-                  onClick={() => setPontoBlend(ponto)}
-                >
-                  {ponto}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {/* Opções específicas para refrigerantes */}
-        {ehRefri && (
-          <div className="mb-4">
-            <label className="block text-white font-medium mb-2">Sabor:</label>
-            <div className="grid grid-cols-1 gap-2">
-              {saboresRefri.map((sabor) => (
-                <button
-                  key={sabor}
-                  className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                    saborRefriSelecionado === sabor 
-                      ? "bg-amber-500 text-black" 
-                      : "bg-gray-700 text-white hover:bg-gray-600"
-                  }`}
-                  onClick={() => setSaborRefriSelecionado(sabor)}
-                >
-                  {sabor}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {/* Opcionais apenas se houver para o produto */}
-        {getOpcionais().length > 0 && (
-          <div className="mb-4">
-            <label className="block text-white font-medium mb-2">Opcionais:</label>
-            <div className="space-y-2">
-              {getOpcionais().map((op, i) => (
-                <div 
-                  key={i}
-                  className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${
-                    opcionaisSelecionados.includes(op.nome) 
-                      ? "bg-amber-500/20 border border-amber-500" 
-                      : "bg-gray-700 hover:bg-gray-600"
-                  }`}
-                  onClick={() => toggleOpcional(op.nome)}
-                >
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      className="mr-2 h-4 w-4 accent-amber-500"
-                      checked={opcionaisSelecionados.includes(op.nome)}
-                      onChange={() => {}}
-                    />
-                    <span className="text-white">{op.nome}</span>
-                  </div>
-                  <span className="text-amber-500 font-medium">+R$ {op.preco}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        
-        <div className="mb-4">
-          <label className="block text-white font-medium mb-2">Observações:</label>
-          <textarea
-            className="w-full bg-gray-700 text-white border border-gray-600 rounded-md p-2 focus:border-amber-500 focus:outline-none"
-            placeholder="Ex: sem cebola, no ponto certo..."
-            rows="2"
-            value={observacao}
-            onChange={(e) => setObservacao(e.target.value)}
-          ></textarea>
-        </div>
-        
-        <div className="flex gap-3 mt-2">
-          <button 
-            className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md transition-colors"
-            onClick={onClose}
-          >
-            Cancelar
-          </button>
-          <button 
-            className="flex-1 py-3 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-md transition-colors"
-            onClick={handleConfirm}
-          >
-            Adicionar ao Pedido
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Componente para o item do pedido
-const ItemPedido = ({ item, onAjustarQuantidade }) => {
-  return (
-    <div className="bg-gray-800 rounded-lg p-3 mb-3">
-      <div className="flex justify-between items-center mb-1">
-        <div className="font-bold text-white">{item.nome}</div>
-        <div className="text-amber-500 font-bold">R$ {(item.preco * item.quantidade).toFixed(2)}</div>
-      </div>
-      
-      {item.observacao && (
-        <div className="text-sm text-gray-400 mb-2 italic">
-          {item.observacao}
-        </div>
-      )}
-      
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-300">
-          R$ {item.preco.toFixed(2)} × {item.quantidade}
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <button 
-            className="w-8 h-8 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-md"
-            onClick={() => onAjustarQuantidade(item.nome, -1, item.observacao)}
-          >
-            -
-          </button>
-          <span className="text-white w-6 text-center">{item.quantidade}</span>
-          <button 
-            className="w-8 h-8 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-md"
-            onClick={() => onAjustarQuantidade(item.nome, 1, item.observacao)}
-          >
-            +
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Componente para o resumo do pedido (layout novo conforme imagem 3)
-const ResumoPedido = ({ pedido, total, onAjustarQuantidade }) => {
-  if (pedido.length === 0) {
-    return (
-      <div className="bg-gray-900 rounded-lg p-4 mb-6 text-center">
-        <p className="text-gray-400">Seu pedido está vazio</p>
-        <p className="text-sm text-gray-500 mt-2">Selecione produtos para adicionar</p>
-      </div>
-    );
-  }
-  
-  return (
-    <div className="bg-gray-900 rounded-lg p-4 mb-6">
-      <h3 className="text-xl font-bold text-amber-500 mb-4">Seu Pedido:</h3>
-      
-      <div className="max-h-80 overflow-y-auto mb-4">
-        {pedido.map((item, i) => (
-          <div key={i} className="mb-4 border-b border-gray-800 pb-3">
-            <div className="flex justify-between items-center mb-2">
-              <div className="text-lg font-bold text-amber-500">{item.nome}</div>
-              <div className="text-lg font-bold text-white">R$ {(item.preco * item.quantidade).toFixed(2)}</div>
-            </div>
-            
-            {item.observacao && (
-              <div className="text-sm text-gray-400 mb-2">
-                {item.observacao}
-              </div>
-            )}
-            
-            <div className="flex justify-between items-center">
-              <div className="text-sm text-gray-300">
-                R$ {item.preco.toFixed(2)} × {item.quantidade}
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <button 
-                  className="w-8 h-8 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-md"
-                  onClick={() => onAjustarQuantidade(item.nome, -1, item.observacao)}
-                >
-                  -
-                </button>
-                <span className="text-white w-6 text-center">{item.quantidade}</span>
-                <button 
-                  className="w-8 h-8 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-md"
-                  onClick={() => onAjustarQuantidade(item.nome, 1, item.observacao)}
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      <div className="flex justify-between items-center pt-3 border-t border-gray-700">
-        <span className="text-lg font-bold text-white">Total:</span>
-        <span className="text-xl font-bold text-amber-500">R$ {total.toFixed(2)}</span>
-      </div>
-    </div>
-  );
-};
-
-// Componente para o formulário do cliente
-const FormularioCliente = ({ cliente, setCliente, erros }) => {
-  return (
-    <div className="formulario-cliente">
-      <h3>Dados do Cliente:</h3>
-      
-      <div className="mb-3">
-        <input
-          type="text"
-          placeholder="Nome completo *"
-          value={cliente.nome}
-          onChange={(e) => setCliente({ ...cliente, nome: e.target.value })}
-          className={erros.nome ? "border-red-500" : ""}
-        />
-        {erros.nome && <div className="text-red-500 text-sm mt-1">{erros.nome}</div>}
-      </div>
-      
-      <div className="mb-3">
-        <input
-          type="text"
-          placeholder="Endereço completo *"
-          value={cliente.endereco}
-          onChange={(e) => setCliente({ ...cliente, endereco: e.target.value })}
-          className={erros.endereco ? "border-red-500" : ""}
-        />
-        {erros.endereco && <div className="text-red-500 text-sm mt-1">{erros.endereco}</div>}
-      </div>
-      
-      <div className="mb-3">
-        <input
-          type="text"
-          placeholder="Telefone *"
-          value={cliente.telefone}
-          onChange={(e) => {
-            // Máscara simples para telefone: apenas números
-            const value = e.target.value.replace(/\D/g, '');
-            setCliente({ ...cliente, telefone: value });
-          }}
-          className={erros.telefone ? "border-red-500" : ""}
-        />
-        {erros.telefone && <div className="text-red-500 text-sm mt-1">{erros.telefone}</div>}
-      </div>
-      
-      <div className="mb-3">
-        <select
-          value={cliente.pagamento}
-          onChange={(e) => setCliente({ ...cliente, pagamento: e.target.value })}
-          className={erros.pagamento ? "border-red-500" : ""}
-        >
-          <option value="">Forma de Pagamento *</option>
-          <option value="Pix">Pix</option>
-          <option value="Cartão">Cartão</option>
-          <option value="Dinheiro">Dinheiro</option>
-        </select>
-        {erros.pagamento && <div className="text-red-500 text-sm mt-1">{erros.pagamento}</div>}
-      </div>
-      
-      <div className="text-sm text-gray-400 mt-2">* Campos obrigatórios</div>
-    </div>
-  );
-};
-
-// Componente para o status do pedido
-const StatusPedido = ({ numeroPedido, status }) => {
-  if (!numeroPedido) return null;
-  
-  const getStatusColor = () => {
-    switch (status) {
-      case "Recebido": return "bg-blue-500";
-      case "Em Preparo": return "bg-yellow-500";
-      case "Saiu para Entrega": return "bg-purple-500";
-      case "Entregue": return "bg-green-500";
-      default: return "bg-gray-500";
-    }
-  };
-  
-  return (
-    <div className="bg-gray-800 rounded-lg p-4 mt-4">
-      <h3 className="text-lg font-bold text-amber-500 mb-2">
-        Pedido #{String(numeroPedido).padStart(3, "0")}
-      </h3>
-      <div className="flex items-center">
-        <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor()}`}></div>
-        <p className="text-white">{status || "Aguardando atualização..."}</p>
-      </div>
-    </div>
-  );
-};
 
 // Componente principal
 function PedidoCliente() {
@@ -462,11 +41,16 @@ function PedidoCliente() {
   const [errosCliente, setErrosCliente] = useState({});
   const [numeroPedido, setNumeroPedido] = useState(null);
   const [statusPedido, setStatusPedido] = useState("");
+  const statusAtualRef = useRef(""); // ✅ NOVO
+
   const [modalAberto, setModalAberto] = useState(false);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [carregando, setCarregando] = useState(false);
   const [notificacao, setNotificacao] = useState({ mensagem: "", tipo: "" });
   const [modalConfirmacao, setModalConfirmacao] = useState(false);
+  const [statusAnterior, setStatusAnterior] = useState("");
+const [mostrarAlertaStatus, setMostrarAlertaStatus] = useState(false);
+  
 
   // Dados dos produtos
   const produtos = [
@@ -484,6 +68,10 @@ function PedidoCliente() {
   ];
 
   useEffect(() => {
+    statusAtualRef.current = statusPedido; // ✅ NOVO: mantém sempre o valor atual do status
+  }, [statusPedido]);
+  
+  useEffect(() => {
     const numeroSalvo = localStorage.getItem("pedidoClienteRoots");
     if (numeroSalvo && !numeroPedido) {
       buscarPedidoAtivo(parseInt(numeroSalvo));
@@ -500,7 +88,16 @@ function PedidoCliente() {
       return () => clearTimeout(timer);
     }
   }, [notificacao]);
-
+  useEffect(() => {
+    if (mostrarAlertaStatus) {
+      const timer = setTimeout(() => {
+        setMostrarAlertaStatus(false);
+      }, 4000); // Fecha automaticamente após 4 segundos
+  
+      return () => clearTimeout(timer);
+    }
+  }, [mostrarAlertaStatus]);
+  
   const buscarPedidoAtivo = async (numero) => {
     try {
       const vendasRef = collection(db, "vendas");
@@ -514,10 +111,17 @@ function PedidoCliente() {
   
         setNumeroPedido(numero);
         setStatusPedido(data.status);
+        statusAtualRef.current = data.status; // ✅ sincroniza o valor logo no início
   
         onSnapshot(ref, (doc) => {
           if (doc.exists()) {
-            setStatusPedido(doc.data().status);
+            const novoStatus = doc.data().status;
+            if (novoStatus !== statusAtualRef.current) {
+              setStatusAnterior(statusAtualRef.current);
+              setStatusPedido(novoStatus);
+              statusAtualRef.current = novoStatus; // ✅ atualiza corretamente a referência
+              setMostrarAlertaStatus(true);
+            }
           }
         });
       }
@@ -835,6 +439,11 @@ function PedidoCliente() {
           </div>
         </div>
       </main>
+      <AlertaStatusPedido
+  status={statusPedido}
+  visivel={mostrarAlertaStatus}
+  onFechar={() => setMostrarAlertaStatus(false)}
+/>
 
       {/* Modal de personalização */}
       {modalAberto && produtoSelecionado && (
@@ -844,55 +453,17 @@ function PedidoCliente() {
           onConfirm={adicionarProduto}
         />
       )}
-      
-      {/* Modal de confirmação */}
       {modalConfirmacao && (
-        <div className="modal" onClick={() => setModalConfirmacao(false)}>
-          <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-xl font-bold text-amber-500 mb-4">Confirmar Pedido</h3>
-            
-            <div className="bg-gray-700 rounded-lg p-3 mb-4">
-              <h4 className="font-bold text-white mb-2">Itens do Pedido:</h4>
-              <ul className="space-y-1 mb-3">
-                {pedido.map((item, i) => (
-                  <li key={i} className="text-gray-300">
-                    {item.quantidade}× {item.nome}
-                    {item.observacao && <span className="text-sm text-gray-400"> ({item.observacao})</span>}
-                  </li>
-                ))}
-              </ul>
-              <div className="flex justify-between border-t border-gray-600 pt-2">
-                <span className="font-bold text-white">Total:</span>
-                <span className="font-bold text-amber-500">R$ {total.toFixed(2)}</span>
-              </div>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-3 mb-4">
-              <h4 className="font-bold text-white mb-2">Dados de Entrega:</h4>
-              <p className="text-gray-300"><span className="text-gray-400">Nome:</span> {cliente.nome}</p>
-              <p className="text-gray-300"><span className="text-gray-400">Endereço:</span> {cliente.endereco}</p>
-              <p className="text-gray-300"><span className="text-gray-400">Telefone:</span> {cliente.telefone}</p>
-              <p className="text-gray-300"><span className="text-gray-400">Pagamento:</span> {cliente.pagamento}</p>
-            </div>
-            
-            <div className="flex gap-3">
-              <button 
-                className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md"
-                onClick={() => setModalConfirmacao(false)}
-              >
-                Voltar
-              </button>
-              <button 
-                className="flex-1 py-3 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-md"
-                onClick={finalizarPedido}
-                disabled={carregando}
-              >
-                {carregando ? 'Processando...' : 'Confirmar Pedido'}
-              </button>
-            </div>
-          </div>
-        </div>
+        <ModalConfirmacaoPedido
+          pedido={pedido}
+          cliente={cliente}
+          total={total}
+          onFechar={() => setModalConfirmacao(false)}
+          onConfirmar={finalizarPedido}
+          carregando={carregando}
+        />
       )}
+
     </div>
   );
 }
