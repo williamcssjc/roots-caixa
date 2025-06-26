@@ -18,6 +18,19 @@ const FormularioCliente = ({ cliente, setCliente, erros }) => {
         {erros.nome && <div className="text-red-500 text-sm mt-1">{erros.nome}</div>}
       </div>
 
+        <div className="campo-formulario">
+    <input
+      type="text"
+      id="cep"
+      placeholder="CEP Ex: 12236-000"
+      value={cliente.cep}
+      onChange={(e) => setCliente({ ...cliente, cep: e.target.value })}
+      maxLength={9}
+      required
+    />
+    {erros.cep && <p className="erro">{erros.cep}</p>}
+  </div>
+
       <div className="mb-3">
         <input
           type="text"

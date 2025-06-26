@@ -1,0 +1,87 @@
+.modal-pix-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .modal-pix {
+    background-color: #111;
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 90%;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
+    color: #fff;
+    animation: slideUp 0.4s ease;
+  }
+  
+  .modal-pix-titulo {
+    font-size: 1.6rem;
+    color: #ffc107;
+    margin-bottom: 1rem;
+  }
+  
+  .chave-pix {
+    font-size: 1.1rem;
+    font-weight: bold;
+    background: #222;
+    padding: 0.7rem 1rem;
+    border-radius: 0.5rem;
+    margin: 0.5rem 0;
+    color: #fff;
+  }
+  
+  .qr-code {
+    width: 180px;
+    margin: 1rem auto;
+    border: 3px solid #ffc107;
+    border-radius: 12px;
+  }
+  
+  .valor-total {
+    font-size: 1.4rem;
+    margin: 0.8rem 0;
+    color: #ccc;
+  }
+  
+  .botao-copiar,
+  .botao-fechar,
+  .botao-confirmar {
+    margin-top: 0.7rem;
+    padding: 0.7rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #ffc107;
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .botao-copiar:hover,
+  .botao-fechar:hover,
+  .botao-confirmar:hover {
+    background-color: #ffca28;
+    transform: scale(1.05);
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0 }
+    to { opacity: 1 }
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  

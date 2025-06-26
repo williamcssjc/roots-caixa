@@ -4,6 +4,7 @@ const ModalConfirmacaoPedido = ({
   pedido,
   cliente,
   total,
+  valorFrete = 0,
   onFechar,
   onConfirmar,
   carregando
@@ -31,6 +32,10 @@ const ModalConfirmacaoPedido = ({
           </div>
         </div>
 
+        <p>Subtotal: R$ {total.toFixed(2)}</p>
+        <p>Entrega: R$ {valorFrete.toFixed(2)}</p>
+        <p><strong>Total Geral: R$ {(total + valorFrete).toFixed(2)}</strong></p>
+
         <div className="bg-gray-700 rounded-lg p-3 mb-4">
           <h4 className="font-bold text-white mb-2">Dados de Entrega:</h4>
           <p className="text-gray-300"><span className="text-gray-400">Nome:</span> {cliente.nome}</p>
@@ -51,7 +56,7 @@ const ModalConfirmacaoPedido = ({
             onClick={onConfirmar}
             disabled={carregando}
           >
-            {carregando ? 'Processando...' : 'Confirmar Pedido'}
+            {carregando ? 'Processando...' : 'Finalizar Pedido'}
           </button>
         </div>
       </div>
