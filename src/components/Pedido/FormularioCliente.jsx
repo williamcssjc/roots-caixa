@@ -1,6 +1,8 @@
 // 📁 src/components/Pedido/FormularioCliente.jsx
 
 import React from "react";
+import '../../Styles/inputs.css';
+import '../../Styles/buttons.css';
 
 const FormularioCliente = ({ cliente, setCliente, erros }) => {
   return (
@@ -8,13 +10,14 @@ const FormularioCliente = ({ cliente, setCliente, erros }) => {
       <h3>Dados do Cliente:</h3>
 
       <div className="mb-3">
-        <input
-          type="text"
-          placeholder="Nome completo *"
-          value={cliente.nome}
-          onChange={(e) => setCliente({ ...cliente, nome: e.target.value })}
-          className={erros.nome ? "border-red-500" : ""}
-        />
+      <input
+  type="text"
+  placeholder="Nome completo *"
+  value={cliente.nome}
+  onChange={(e) => setCliente({ ...cliente, nome: e.target.value })}
+  className={`bg-black text-white border-2 border-yellow-500 rounded-xl px-4 py-2 w-full shadow-md shadow-yellow-500 ${erros.nome ? 'border-red-500' : ''}`}
+/>
+
         {erros.nome && <div className="text-red-500 text-sm mt-1">{erros.nome}</div>}
       </div>
 
@@ -34,13 +37,15 @@ const FormularioCliente = ({ cliente, setCliente, erros }) => {
       <div className="mb-3">
         <input
           type="text"
-          placeholder="Endereço completo *"
+          placeholder="Ex: Rua João Gualberto*"
+          id="endereço"
           value={cliente.endereco}
           onChange={(e) => setCliente({ ...cliente, endereco: e.target.value })}
           className={erros.endereco ? "border-red-500" : ""}
         />
         {erros.endereco && <div className="text-red-500 text-sm mt-1">{erros.endereco}</div>}
       </div>
+
 
       <div className="mb-3">
         <input

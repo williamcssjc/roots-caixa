@@ -1,0 +1,36 @@
+.botao-padrao {
+  background-color: #5e4c19;
+  color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 16px;
+  text-align: center;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+  display: block;
+  box-shadow:
+    0 0 6px #ffde59,
+    0 0 14px #ffde59,
+    inset 0 0 4px #3a2f12;
+  text-shadow: 1px 1px 2px #000;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.botao-padrao:hover {
+  transform: scale(1.03);
+  box-shadow:
+    0 0 12px #ffde59,
+    0 0 24px #ffde59,
+    inset 0 0 6px #ffde59;
+}
+
+.botao-padrao:active {
+  transform: scale(0.97);
+  box-shadow:
+    0 0 6px #ffde59,
+    inset 0 0 10px #3a2f12;
+}

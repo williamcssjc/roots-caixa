@@ -1,6 +1,7 @@
 // 📁 src/components/Pedido/ProdutoModal.jsx — versão fiel ao original
 
 import React, { useState } from "react";
+import "../../Styles/cards.css"; 
 
 const ProdutoModal = ({ produto, onClose, onConfirm }) => {
   const [observacao, setObservacao] = useState("");
@@ -69,7 +70,6 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
     const observacaoArray = [
       observacao.trim() ? observacao.trim() : null,
       ehHamburguer && pontoBlend ? `ponto: ${pontoBlend}` : null,
-      ehRefri && saborRefriSelecionado ? `sabor: ${saborRefriSelecionado}` : null,
       ...adicionais.map((op) => `+ ${op.nome}`)
     ].filter(Boolean);
 
@@ -81,21 +81,25 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
       ...produto,
       observacao: observacaoFinal,
       preco: produto.preco + valorAdicionais,
-      quantidade: quantidade
+      quantidade: quantidade,
+      sabor: ehRefri ? saborRefriSelecionado : undefined
     };
+    
 
     onConfirm(produtoFinal);
   };
 
   return (
     <div className="modal" onClick={onClose}>
-      <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-conteudo estilo-roots" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center border-b border-gray-700 pb-3 mb-2">
           <h3 className="text-xl font-bold text-amber-500">{produto.nome}</h3>
           <div className="text-lg font-bold text-white">
             R$ {calcularPrecoTotal().toFixed(2)}
           </div>
         </div>
+
+        
 
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
@@ -122,7 +126,7 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
                 <button
                   key={ponto}
                   className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                    pontoBlend === ponto ? "bg-amber-500 text-black" : "bg-gray-700 text-white hover:bg-gray-600"
+                    pontoBlend === ponto ? "bg-amber-500 text-black" : ""
                   }`}
                   onClick={() => setPontoBlend(ponto)}
                 >
@@ -133,24 +137,30 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
           </div>
         )}
 
-        {ehRefri && (
-          <div className="mb-4">
-            <label className="block text-white font-medium mb-2">Sabor:</label>
-            <div className="grid grid-cols-1 gap-2">
-              {saboresRefri.map((sabor) => (
-                <button
-                  key={sabor}
-                  className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                    saborRefriSelecionado === sabor ? "bg-amber-500 text-black" : "bg-gray-700 text-white hover:bg-gray-600"
-                  }`}
-                  onClick={() => setSaborRefriSelecionado(sabor)}
-                >
-                  {sabor}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+{ehRefri && saborRefriSelecionado && (
+  <div className="text-sm text-gray-300 mt-2">
+    Sabor selecionado: <span className="text-yellow-400">{saborRefriSelecionado}</span>
+  </div>
+)}
+
+{ehRefri && (
+  <div className="mb-4">
+    <label className="block text-white font-medium mb-2">Sabor:</label>
+    <div className="grid grid-cols-1 gap-2">
+      {saboresRefri.map((sabor) => (
+        <button
+          key={sabor}
+          className={`btn-seletor ${saborRefriSelecionado === sabor ? "ativo" : ""}`}
+          onClick={() => setSaborRefriSelecionado(sabor)}
+        >
+          {sabor}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+
+        
 
         {getOpcionais().length > 0 && (
           <div className="mb-4">
@@ -182,24 +192,15 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
           </div>
         )}
 
-        <div className="mb-4">
-          <label className="block text-white font-medium mb-2">Observações:</label>
-          <textarea
-            className="w-full bg-gray-700 text-white border border-gray-600 rounded-md p-2 focus:border-amber-500 focus:outline-none"
-            placeholder="Ex: sem cebola, no ponto certo..."
-            rows="2"
-            value={observacao}
-            onChange={(e) => setObservacao(e.target.value)}
-          ></textarea>
-        </div>
+        
 
         <div className="flex gap-3 mt-2">
           <button
-            className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md transition-colors"
+            className=""
             onClick={onClose}
           >Cancelar</button>
           <button
-            className="flex-1 py-3 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-md transition-colors"
+            className=""
             onClick={handleConfirm}
           >Adicionar ao Pedido</button>
         </div>

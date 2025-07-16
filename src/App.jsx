@@ -18,6 +18,10 @@ import PedidoCliente from "./pages/clientes/PedidoCliente";
 import Cadastro from "./pages/clientes/Cadastro";
 import Carrinho from "./pages/clientes/Carrinho";
 import Promocoes from "./pages/clientes/Promocoes";
+import './Styles/buttons.css';
+import './Styles/inputs.css';
+import './Styles/modals.css';
+
 
 function App() {
   return (

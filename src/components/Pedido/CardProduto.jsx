@@ -1,18 +1,13 @@
-// components/Pedido/CardProduto.jsx
-import React from "react";
-import "./CardProduto.css";
+import "../../Styles/cards.css"; // ⚠️ Certifique-se que esse path esteja correto
 
 const CardProduto = ({ produto, onClick }) => {
   return (
-    <button className="card-produto-dark" onClick={() => onClick(produto)}>
-      <div className="imagem-produto">
-        <img src={produto.imagem || "/img/padrao.png"} alt={produto.nome} />
-      </div>
-      <div className="info-produto">
-        <p className="descricao-produto">{produto.descricao}</p> {/* <-- aqui! */}
-        <span className="preco-produto">R$ {produto.preco.toFixed(2)}</span>
-      </div>
-    </button>
+    <div className="card-produto" onClick={() => onClick(produto)}>
+      <img src={produto.imagem || "/img/padrao.png"} alt={produto.nome} />
+      <h3>{produto.nome}</h3>
+      <p>{produto.descricao}</p>
+      <div className="preco">R$ {produto.preco.toFixed(2)}</div>
+    </div>
   );
 };
 

@@ -1,0 +1,18 @@
+/* src/Style/inputs.css */
+.input-style {
+    background-color: #2a2a2a;
+    border: 2px solid #f7931e;
+    border-radius: 10px;
+    padding: 14px;
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 16px;
+    width: 100%;
+  }
+  
+  .input-style:focus {
+    border-color: #ff6d00;
+    outline: none;
+    box-shadow: 0 0 0 2px #ff6d0033;
+  }
+  
