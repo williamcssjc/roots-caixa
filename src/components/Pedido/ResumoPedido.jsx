@@ -4,6 +4,7 @@ import "../../Styles/resumo.css";
 const ResumoPedido = ({
   pedido,
   valorFrete = 0,
+  cliente,
   onAjustarQuantidade,
   onLimparPedido,
 }) => {
@@ -84,9 +85,16 @@ const ResumoPedido = ({
 </div>
 
 
-      <div className="total text-right text-lg font-bold text-green-400 mt-3">
+    
+      {cliente.pagamento === "Dinheiro" && cliente.precisaTroco === "Sim" && cliente.troco && (
+  <div className="text-sm text-white mt-2">
+    <span className="font-semibold text-yellow-300">Troco para:</span> R$ {parseFloat(cliente.troco).toFixed(2)}
+  </div>
+)}
+  <div className="total text-right text-lg font-bold text-green-400 mt-3">
         Total: R$ {(total + valorFrete).toFixed(2)}
       </div>
+
 
       <div className="text-right mt-2">
         <button
@@ -99,5 +107,6 @@ const ResumoPedido = ({
     </div>
   );
 };
+
 
 export default ResumoPedido;

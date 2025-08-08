@@ -31,14 +31,10 @@ import {
   calcularDistanciaKm,
 } from "../../utils/Geolocalizacao";
 import ModalPagamentoPix from "../../components/Pedido/ModalPagamentoPix";
+import BotaoWhatsApp from "../../components/BotaoWhatsApp";
 
 
 
-// Dados das promoções
-const promocoes = [
-  { imagem: "/promo1.jpg", alt: "Promoção 1" },
-  { imagem: "/promo2.jpg", alt: "Promoção 2" },
-];
 
 // Dados dos produtos
 const produtos = [
@@ -63,8 +59,8 @@ const produtos = [
     descricao: "Hambúrguer, queijo, alface, tomate e molho verde.",
     categoria: "burgers",
   },
-  { id: 4, nome: "Batata", preco: 10, descricao: "Porção de batatas fritas", categoria: "batatas" },
-  { id: 5, nome: "Refri Lata", preco: 8, descricao: "Refrigerante em lata", categoria: "bebidas" },
+  { id: 4, nome: "Batata", preco: 8, descricao: "Porção de batatas fritas", categoria: "batatas" },
+  { id: 5, nome: "Refri Lata", preco: 6, descricao: "Refrigerante 350ml", categoria: "bebidas" },
   { id: 6, nome: "Combo Roots Burguer", preco: 28, descricao: "Roots buger + batata + refri", categoria: "hamburguer" },
   { id: 7, nome: "Combo Roots Bacon", preco:35, descricao: "Roots Bacon + batata + refri", categoria: "hamburguer" },
   { id: 8, nome: "Combo Roots Salada", preco:30, descricao: "Roots Salada + batata + refri", categoria: "hamburguer" },
@@ -78,6 +74,8 @@ function PedidoCliente() {
     telefone: "",
     pagamento: "",
     cep: "",
+    precisaTroco:"",
+    troco:""
   });
   const [errosCliente, setErrosCliente] = useState({});
   const [numeroPedido, setNumeroPedido] = useState(null);
@@ -120,7 +118,7 @@ const rootsLon = -45.8643073;
     }
   };
   
-  
+
 
   // Função para verificar área de entrega e calcular frete
   const verificarAreaEntrega = async () => {
@@ -151,8 +149,14 @@ const rootsLon = -45.8643073;
   distancia *= 1; // Aplica correção para se aproximar da rota real
   console.log("🧠 Distância ajustada com fator 1.4x:", distancia.toFixed(2), "km");
 
-  if (distancia <= 6) {
-    const frete = Math.ceil(distancia); // R$1 por km, arredondado pra cima
+  if (distancia <= 6) { // raio máximo de entrega 6 km
+    let frete;
+    if (distancia <= 3) {
+      frete = 3;
+    } else {
+      const kmExtra = Math.ceil(distancia) - 3;
+      frete = 3 + kmExtra * 1; // R$ 1,00 por km extra
+    }
     return { dentroDoRaio: true, frete };
   }
 
@@ -581,43 +585,32 @@ const docRef = await addDoc(collection(db, "vendas"), {
           <p className="text-white text-sm">{notificacao.mensagem}</p>
         </div>
       )}
-
-      {/* Landing Page Inicial */}
-      {!numeroPedido && (
-        <div className="flex flex-col items-center justify-center h-screen text-center p-4 relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-zinc-900 to-black animate-pulse opacity-30"></div>
-          <div className="relative z-10">
-          <img src={logo} alt="Logo Roots Burguer" className="w-24 h-auto mb-1 max-h-16 object-contain" />
-          <h1 className="text-3xl font-bold mb-4 text-yellow-500">Roots Burguer</h1>
-            <p className="text-xl font-semibold mb-8 text-gray-300 max-w-md">
-              Escolha seu combo favorito e receba em casa rapidinho 🍔⚡
-            </p>
-            <button
-              className="bg-yellow-500 text-zinc-900 font-bold py-4 px-10 rounded-full text-xl shadow-lg hover:bg-yellow-400 hover:scale-105 transition-all duration-300 ease-in-out transform"
-              onClick={() => setNumeroPedido(0)}
-            >
-              Fazer Pedido
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Conteúdo Principal do Pedido (após passar a landing) */}
-      {numeroPedido !== null && (
-        <div className="container mx-auto p-3 pb-20">
-          <header className="flex flex-col items-center justify-center py-2">
-<img
+     
+     {/* Conteúdo Principal do Pedido (após passar a landing) */}
+{numeroPedido !== null && (
+  <div className="container mx-auto p-3 pb-20">
+    <header className="flex flex-col items-center justify-center py-2">
+      <div className="w-[100px] h-[100px]">
+      <img
   src={logo}
   alt="Logo Roots Burguer"
-  className="w-28 h-auto max-h-20 object-contain"
-  style={{ maxWidth: "120px", height: "auto" }}
+  className="object-contain mx-auto block sm:w-[150px] sm:h-[150px] md:w-[200px] md:h-[200px] lg:w-[300px] lg:h-[300px]"
+  style={{
+    width: "100px",   // Mobile por padrão
+    height: "100px",
+    display: "block",
+  }}
 />
-            <h1 className="text-sm font-bold text-yellow-500">Cardápio</h1>
-          </header>
+
+
+      </div>
+      <h1 className="text-sm font-bold text-yellow-500">Cardápio</h1>
+    </header>
+
 
           {/* Navegação de Categorias Fixa */}
           <div className="sticky top-0 z-30 bg-zinc-900 py-2">
-            <div className="flex overflow-x-auto space-x-3 p-2 scrollbar-hide">
+            <div className="flex overflow-x-auto space-x-3 p-2 scrollbar-hide snap-x">
               {categorias.map((categoria) => (
                 <button
                   key={categoria.id}
@@ -635,17 +628,7 @@ const docRef = await addDoc(collection(db, "vendas"), {
             </div>
           </div>
 
-          {/* Carrossel de Promoções */}
-          <div className="carrossel-promocoes mb-4 rounded-lg overflow-hidden shadow-lg mt-4">
-            <Slider {...settings}>
-              {promocoes.map((promo, index) => (
-                <div key={index}>
-                  <img src={promo.imagem} alt={promo.alt} className="w-full h-40 object-cover" loading="lazy" />
-                </div>
-              ))}
-            </Slider>
-          </div>
-
+         
           <main className="flex flex-col">
             <div>
               {/* Grid de Produtos */}
@@ -667,8 +650,10 @@ const docRef = await addDoc(collection(db, "vendas"), {
 </div>
 
 <div id="resumo-pedido">
-  <ResumoPedido pedido={pedido} total={total} valorFrete={valorFrete} onAjustarQuantidade={alterarQuantidade} />
+  <ResumoPedido pedido={pedido} total={total} valorFrete={valorFrete} cliente={cliente} setCliente={setCliente} onAjustarQuantidade={alterarQuantidade} />
+  <BotaoWhatsApp />
 </div>
+
 
 
               <button
@@ -712,7 +697,7 @@ const docRef = await addDoc(collection(db, "vendas"), {
               </button>
             </div>
             <div className="p-4">
-              <ResumoPedido pedido={pedido} total={total} valorFrete={valorFrete} onAjustarQuantidade={alterarQuantidade} />
+              <ResumoPedido pedido={pedido} total={total} valorFrete={valorFrete} cliente={cliente} onAjustarQuantidade={alterarQuantidade} />
               <FormularioCliente cliente={cliente} setCliente={setCliente} erros={errosCliente} />
               <button
                 className={`w-full py-3 text-lg bg-yellow-500 text-zinc-900 font-bold rounded-md shadow-lg hover:bg-yellow-600 transition-all duration-300 ease-in-out mt-4 ${carregando ? "opacity-70 cursor-not-allowed" : ""}`}
@@ -760,45 +745,4 @@ const docRef = await addDoc(collection(db, "vendas"), {
 export default PedidoCliente;
 
 
-
-
-/* Estilos CSS customizados para melhorar a UX */
-<style jsx>{`
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .animate-bounce-slow {
-    animation: bounce-slow 3s infinite;
-  }
-  
-  @keyframes bounce-slow {
-    0%, 20%, 50%, 80%, 100% {
-      transform: translateY(0);
-    }
-    40% {
-      transform: translateY(-10px);
-    }
-    60% {
-      transform: translateY(-5px);
-    }
-  }
-  
-  .animate-pulse-slow {
-    animation: pulse-slow 4s ease-in-out infinite;
-  }
-  
-  @keyframes pulse-slow {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.8;
-    }
-  }
-`}</style>
 

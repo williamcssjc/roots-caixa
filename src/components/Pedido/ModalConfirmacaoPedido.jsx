@@ -29,6 +29,24 @@ const ModalConfirmacaoPedido = ({
 
           <h4 className="font-bold text-yellow-500 mb-2">💰 Pagamento</h4>
           <p>{cliente.pagamento}</p>
+
+          {/* Se pagamento for dinheiro, mostra detalhes sobre troco */}
+          {cliente.pagamento === "Dinheiro" && (
+            <div className="mt-2 ml-2 text-sm space-y-1">
+              <p><span className="text-zinc-400">Precisa de troco?</span> {cliente.precisaTroco}</p>
+
+              {cliente.precisaTroco === "Sim" && cliente.troco && (
+                <>
+                  <p>
+                    <span className="text-zinc-400">Troco para:</span> R$ {parseFloat(cliente.troco).toFixed(2).replace(".", ",")}
+                  </p>
+                  <p className="text-green-400 font-medium flex items-center gap-1">
+                    ✅ Troco registrado no pedido
+                  </p>
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="bg-zinc-800 rounded-lg p-4 mb-4 text-zinc-300">
@@ -83,4 +101,3 @@ const ModalConfirmacaoPedido = ({
 };
 
 export default ModalConfirmacaoPedido;
-

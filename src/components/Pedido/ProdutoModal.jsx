@@ -30,7 +30,7 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
     { nome: "Bacon Extra", preco: 3 },
   ];
 
-  const saboresRefri = ["Coca-Cola", "Guaraná", "Fanta Laranja", "Fanta Uva", "Soda"];
+  const saboresRefri = ["Coca-Cola", "Coca-0", "Guaraná Antartica", "Guaraná-0", "Fanta Laranja", "Sprite"];
 
   const getOpcionais = () => {
     if (ehHamburguer) return opcionaisHamburguer;
@@ -118,25 +118,7 @@ const ProdutoModal = ({ produto, onClose, onConfirm }) => {
           </div>
         </div>
 
-        {ehHamburguer && (
-          <div className="mb-4">
-            <label className="block text-white font-medium mb-2">Ponto do Blend:</label>
-            <div className="grid grid-cols-3 gap-2">
-              {["Mal passado", "Ao ponto", "Bem passado"].map((ponto) => (
-                <button
-                  key={ponto}
-                  className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                    pontoBlend === ponto ? "bg-amber-500 text-black" : ""
-                  }`}
-                  onClick={() => setPontoBlend(ponto)}
-                >
-                  {ponto}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
+        
 {ehRefri && saborRefriSelecionado && (
   <div className="text-sm text-gray-300 mt-2">
     Sabor selecionado: <span className="text-yellow-400">{saborRefriSelecionado}</span>

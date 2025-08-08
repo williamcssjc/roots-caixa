@@ -16,13 +16,7 @@
     justify-content: center;
     margin-bottom: 40px;
   }
-  
-  .logo {
-    max-width: 250px;
-    height: auto;
-    box-shadow: 0 0 30px rgba(255, 153, 0, 0.4);
-    margin-top: 80px;
-  }
+
   
   /* Navegação */
   .menu-navegacao {

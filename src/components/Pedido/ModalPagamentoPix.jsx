@@ -2,7 +2,7 @@ import React from "react";
 import "./ModalPagamentoPix.css";
 
 const ModalPagamentoPix = ({ total, onFechar }) => {
-  const chavePix = "rootsburguer@pix.com";
+  const chavePix = "38682758865";
 
   const copiarTexto = (texto) => {
     navigator.clipboard.writeText(texto);
@@ -26,7 +26,7 @@ const ModalPagamentoPix = ({ total, onFechar }) => {
         </button>
 
         <p style={{ marginTop: "1rem" }}>Ou escaneie o QR Code:</p>
-        <img src="/img/qrcode-pix.png" alt="QR Code Pix" className="qr-code" />
+        <img src="/src/assets/pix.jpeg" alt="QR Code Pix" className="qr-code" />
 
         <p className="valor-total">Total: R$ {total.toFixed(2)}</p>
 

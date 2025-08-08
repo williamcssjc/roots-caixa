@@ -72,6 +72,54 @@ const FormularioCliente = ({ cliente, setCliente, erros }) => {
           <option value="Cartão">Cartão</option>
           <option value="Dinheiro">Dinheiro</option>
         </select>
+        {cliente.pagamento === "Dinheiro" && (
+          <div className="mb-3">
+            <label className="text-white text-sm block mb-1">
+              Precisa de troco?
+            </label>
+            <div className="flex gap-4">
+              <label className="text-white text-sm">
+                <input
+                  type="radio"
+                  name="precisaTroco"
+                  value="Sim"
+                  checked={cliente.precisaTroco === "Sim"}
+                  onChange={(e) => setCliente({ ...cliente, precisaTroco: e.target.value })}
+                />{" "}
+                Sim
+              </label>
+              <label className="text-white text-sm">
+                <input
+                  type="radio"
+                  name="precisaTroco"
+                  value="Não"
+                  checked={cliente.precisaTroco === "Não"}
+                  onChange={(e) =>
+                    setCliente({
+                      ...cliente,
+                      precisaTroco: e.target.value,
+                      troco: "" // limpa o campo se marcar "Não"
+                    })
+                  }
+                />{" "}
+                Não
+              </label>
+            </div>
+          </div>
+        )}
+        {cliente.pagamento === "Dinheiro" && cliente.precisaTroco === "Sim" && (
+            <div className="mb-3 mt-2">
+              <input
+                type="number"
+                placeholder="Troco para quanto? Ex: 50.00"
+                value={cliente.troco}
+                onChange={(e) => setCliente({ ...cliente, troco: e.target.value })}
+                className="bg-black text-white border border-yellow-500 rounded-xl px-4 py-2 w-full shadow-md shadow-yellow-500"
+              />
+            </div>
+          )}
+
+
         {erros.pagamento && <div className="text-red-500 text-sm mt-1">{erros.pagamento}</div>}
       </div>
 
